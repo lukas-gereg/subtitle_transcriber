@@ -27,4 +27,11 @@ if __name__ == "__main__":
 
     aud_buffer = extract_audio(video_path, frame_rate=rate)
     audio = AudioSegment.from_file(aud_buffer, format="wav")
-    play(audio)
+
+    non_silent_ranges = detect_nonsilent(audio, min_silence_len=500, silence_thresh=-40)
+
+    for idx, (start, end) in enumerate(non_silent_ranges):
+        print(idx)
+        audio_chunk = audio[start:end]
+        chunk_io = io.BytesIO()
+        audio_chunk.export(chunk_io, format="wav")
