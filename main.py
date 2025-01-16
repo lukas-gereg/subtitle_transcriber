@@ -24,7 +24,6 @@ def extract_audio(movie_path: str, frame_rate: int = 16000):
 if __name__ == "__main__":
     video_path = "C:\\Osobné\\HDD\\filmy\\Vlny  2024 CZ.mp4"
     rate = 16000
-    aud_bts = 2
 
     aud_buffer = extract_audio(video_path, frame_rate=rate)
     audio = AudioSegment.from_file(aud_buffer, format="wav")
