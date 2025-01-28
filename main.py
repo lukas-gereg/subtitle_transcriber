@@ -27,7 +27,7 @@ def extract_audio(movie_path: str, frame_rate: int = 16000):
 
 
 if __name__ == "__main__":
-    audio_path = os.getcwd() + os.path.sep + "movie_audio.wav"
+    audio_path = os.path.join(os.getcwd(), "movie_audio.wav")
     rate = 16000
 
     # aud_buffer = extract_audio(video_path, frame_rate=rate)
