@@ -7,7 +7,6 @@ from moviepy import VideoFileClip
 from transformers import pipeline
 from pydub.silence import detect_nonsilent
 from pydub.playback import play
-from transformers import pipeline
 
 
 def extract_audio(movie_path: str, frame_rate: int = 16000):
@@ -55,3 +54,9 @@ if __name__ == "__main__":
         chunk_io.seek(0)
 
         prediction = pipe(chunk_io, batch_size=8, return_timestamps=True, return_language=True)
+
+from datetime import timedelta
+
+timeList = ['0:00:00', '0:00:15', '9:30:56', '21:00:00']
+total_time = sum(timedelta(hours=int(ms[0]), minutes=int(ms[1]), seconds=int(ms[2])) for t in timeList for ms in [t.split(":")],
+        timedelta())
