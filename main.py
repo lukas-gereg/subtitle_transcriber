@@ -2,6 +2,7 @@ import io
 import os
 import torch
 import tempfile
+import numpy as np
 from pydub import AudioSegment
 from moviepy import VideoFileClip
 from transformers import pipeline
@@ -33,7 +34,7 @@ if __name__ == "__main__":
     # aud_buffer = extract_audio(video_path, frame_rate=rate)
     audio = AudioSegment.from_file(audio_path, format="wav")
 
-    non_silent_ranges = detect_nonsilent(audio, min_silence_len=500, silence_thresh=-60)
+    non_silent_ranges = detect_nonsilent(audio, min_silence_len=500, silence_thresh=-50)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -45,13 +46,15 @@ if __name__ == "__main__":
     )
 
     for idx, (start, end) in enumerate(non_silent_ranges):
+        print(f"AUDIO INDEX {idx}")
         start = start - 500 if start - 500 > 0 else start
         end = end + 500 if (end + 500) < len(audio) else end
 
         audio_chunk = audio[start:end]
-        chunk_io = io.BytesIO()
+        # chunk_io = io.BytesIO()
 
-        audio_chunk.export(chunk_io, format="wav")
-        chunk_io.seek(0)
+        # audio_chunk.export(chunk_io, format="wav")
+        # chunk_io.seek(0)
 
-        prediction = pipe(chunk_io, batch_size=8, return_timestamps=True, return_language=True)
+        prediction = pipe(np.array(audio_chunk.get_array_of_samples()), batch_size=8, return_timestamps=True, return_language=True)
+        print(prediction)
