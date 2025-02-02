@@ -42,13 +42,17 @@ def denoise_audio(audio: AudioSegment, device: torch.device):
     with torch.no_grad():
         denoised_vocals = denoiser_model(speech_data.unsqueeze(0)).squeeze(0)
 
-    audio_bytes = tensor_to_audio_bytes(denoised_vocals, sr)
+    if sr != audio.frame_rate:
+        denoised_vocals = torchaudio.transforms.Resample(orig_freq=sr, new_freq=audio.frame_rate)(denoised_vocals)
+
+    audio_bytes = tensor_to_audio_bytes(denoised_vocals, audio.frame_rate)
 
     audio_seg = AudioSegment.from_wav(audio_bytes)
 
     return audio_seg
 
 def tensor_to_audio_bytes(audio: torch.Tensor, sr):
+
     tensor = audio.cpu().numpy()
     tensor = (tensor * np.iinfo(np.int16).max).astype(np.int16)
 
